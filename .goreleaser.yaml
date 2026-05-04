@@ -1,0 +1,64 @@
+version: 2
+
+project_name: o2s
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: o2s
+    main: ./cmd/o2s
+    binary: o2s
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w
+      - -X github.com/O2S-Y/o2s/internal/version.Version={{.Version}}
+      - -X github.com/O2S-Y/o2s/internal/version.Commit={{.Commit}}
+      - -X github.com/O2S-Y/o2s/internal/version.Date={{.Date}}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+# Optional distribution channels — uncomment + configure when a public repo exists.
+#
+# brews:
+#   - name: o2s
+#     repository:
+#       owner: o2s
+#       name: homebrew-tap
+#     homepage: https://github.com/O2S-Y/o2s
+#     description: "A beautiful, powerful Swiss-army-knife CLI"
+#     license: MIT
+#
+# scoops:
+#   - name: o2s
+#     repository:
+#       owner: o2s
+#       name: scoop-bucket
+#     homepage: https://github.com/O2S-Y/o2s
+#     description: "A beautiful, powerful Swiss-army-knife CLI"
+#     license: MIT

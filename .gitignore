@@ -1,0 +1,8 @@
+/bin/
+/dist/
+/.idea/
+/.vscode/
+*.exe
+*.test
+*.out
+.DS_Store
